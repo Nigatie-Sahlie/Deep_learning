@@ -1,0 +1,7 @@
+#files
+materials/
+note.txt
+
+#configration
+.DL_VE/
+src/__pycache__/
