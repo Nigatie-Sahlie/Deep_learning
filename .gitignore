@@ -4,7 +4,8 @@ note.txt
 notebooks/Model/
 notebooks/helper_functions.py
 
-
 #configration
 .DL_VE/
 src/__pycache__/
+__pycache__/
+*.pyc
