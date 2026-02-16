@@ -1,8 +1,9 @@
 #files
 materials/
 note.txt
+notebooks/Model/
 notebooks/helper_functions.py
-notebooks/Model
+
 
 #configration
 .DL_VE/
