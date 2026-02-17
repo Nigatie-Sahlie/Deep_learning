@@ -3,6 +3,7 @@ materials/
 note.txt
 notebooks/Model/
 notebooks/helper_functions.py
+data/
 
 #configration
 .DL_VE/
