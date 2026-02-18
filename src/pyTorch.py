@@ -1,8 +1,11 @@
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+import seaborn as sns
 import torch
 import torch.nn as nn
+from sklearn.metrics import confusion_matrix, precision_score, recall_score, f1_score, classification_report
+
 
 
 #model class
@@ -48,48 +51,8 @@ def plot(X, Y, title="Plot"):
     plt.title(title)
     plt.show()
 
-#****************Computer vision part***************************8
-
-##Reusable function for elavuation metrix
-
-torch.manual_seed(42)
-def model_eval(model: torch.nn.Module, 
-               data_loader: torch.utils.data.DataLoader, 
-               loss_fn: torch.nn.Module, 
-               accuracy_fn):
-    """Returns a dictionary containing the results of model predicting on data_loader.
-
-    Args:
-        model (torch.nn.Module): A PyTorch model capable of making predictions on data_loader.
-        data_loader (torch.utils.data.DataLoader): The target dataset to predict on.
-        loss_fn (torch.nn.Module): The loss function of model.
-        accuracy_fn: An accuracy function to compare the models predictions to the truth labels.
-
-    Returns:
-        (dict): Results of model making predictions on data_loader.
-    """
-    loss, acc = 0, 0
-    model.eval()
-    with torch.inference_mode():
-        for X, y in data_loader:
-            # Make predictions with the model
-            y_pred = model(X)
-            
-            # Accumulate the loss and accuracy values per batch
-            loss += loss_fn(y_pred, y)
-            acc += accuracy_fn(y_true=y, 
-                                y_pred=y_pred.argmax(dim=1)) # For accuracy, need the prediction labels (logits -> pred_prob -> pred_labels)
-        
-        # Scale loss and acc to find the average loss/acc per batch
-        loss /= len(data_loader)
-        acc /= len(data_loader)
-        
-    return {"model_name": model.__class__.__name__, # only works when model was created with a class
-            "model_loss": loss.item(),
-            "model_acc": acc}
-
-
 #the training and test loop function
+"""The train loop and test loop function are reusable functions for training and testing a PyTorch model. They take in a model, data, loss function, accuracy function and device and perform the training and testing loop respectively. They also print the average loss and accuracy for each epoch."""
 def train_loop_fnc(model: torch.nn.Module,
         data: torch.utils.data.DataLoader,
         loss_fn: torch.nn.Module,
@@ -157,3 +120,113 @@ def test_loop_fnc(
     ave_test_loss = test_loss / len(data)
     av_test_accu = test_acc / len(data)
     print(f"Test loss: {ave_test_loss:.5f} | Test Accuracy: {av_test_accu:.2f}%")
+
+
+#****************Computer vision part***************************8
+torch.manual_seed(42)
+def model_eval(model: torch.nn.Module, 
+               data_loader: torch.utils.data.DataLoader, 
+               loss_fn: torch.nn.Module, 
+               accuracy_fn):
+    """This function is for evaluating the pyTorch model on a given data_loader with a given loss function and accuracy function.
+    Args:
+        model (torch.nn.Module): A PyTorch model capable of making predictions on data_loader.
+        data_loader (torch.utils.data.DataLoader): The target dataset to predict on.
+        loss_fn (torch.nn.Module): The loss function of model.
+        accuracy_fn: An accuracy function to compare the models predictions to the truth labels.
+
+    Returns:
+        (dict): Results of model making predictions on data_loader.
+    """
+    loss, acc = 0, 0
+    model.eval()
+    with torch.inference_mode():
+        for X, y in data_loader:
+            # Make predictions with the model
+            y_pred = model(X)
+            
+            # Accumulate the loss and accuracy values per batch
+            loss += loss_fn(y_pred, y)
+            acc += accuracy_fn(y_true=y, 
+                                y_pred=y_pred.argmax(dim=1)) # For accuracy, need the prediction labels (logits -> pred_prob -> pred_labels)
+        
+        # Scale loss and acc to find the average loss/acc per batch
+        loss /= len(data_loader)
+        acc /= len(data_loader)
+        
+    return {"model_name": model.__class__.__name__, # only works when model was created with a class
+            "model_loss": loss.item(),
+            "model_acc": acc}
+
+#Calculating confusion matrix
+def evaluate_cnn_metrics(model, test_loader, device):
+    """
+    Evaluate a PyTorch CNN model using:
+    - Confusion Matrix
+    - Precision
+    - Recall
+    - F1 Score
+
+    Args:
+        model: trained PyTorch model
+        test_loader: DataLoader for test dataset
+        device: 'cuda' or 'cpu'
+
+    Returns:
+        dict containing all evaluation metrics
+    """
+
+    model.eval()
+    y_true = []
+    y_pred = []
+
+    with torch.no_grad():
+        for images, labels in test_loader:
+            images = images.to(device)
+            labels = labels.to(device)
+
+            outputs = model(images)
+            _, preds = torch.max(outputs, 1)
+
+            y_true.extend(labels.cpu().numpy())
+            y_pred.extend(preds.cpu().numpy())
+
+    # Convert to numpy arrays
+    y_true = np.array(y_true)
+    y_pred = np.array(y_pred)
+
+    # Confusion Matrix
+    cm = confusion_matrix(y_true, y_pred)
+
+    # Precision, Recall, F1 (macro = treats all classes equally)
+    precision = precision_score(y_true, y_pred, average='macro')
+    recall = recall_score(y_true, y_pred, average='macro')
+    f1 = f1_score(y_true, y_pred, average='macro')
+
+    # Detailed per-class report
+    report = classification_report(y_true, y_pred)
+
+    results = {
+        "confusion_matrix": cm,
+        "precision": precision,
+        "recall": recall,
+        "f1_score": f1,
+        "classification_report": report
+    }
+
+    return results
+
+
+#visualization of confusion matrix
+def plot_confusion_matrix(cm, class_names=None):    
+    plt.figure(figsize=(15, 10))
+    sns.heatmap(cm, annot=True, fmt="d",
+                xticklabels=class_names,
+                yticklabels=class_names,)
+    plt.xlabel("Predicted", fontsize=20)
+    plt.ylabel("Actual", fontsize=20)
+    plt.show()
+
+
+
+
