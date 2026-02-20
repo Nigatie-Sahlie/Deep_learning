@@ -1,5 +1,4 @@
 import numpy as np
-import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 import torch
@@ -7,6 +6,9 @@ import torch.nn as nn
 from sklearn.metrics import confusion_matrix, precision_score, recall_score, f1_score, classification_report
 
 
+#To calculate the total time taken for the spacific code.
+def time_calculator(start, end):
+    return print(f"The total time taken is: {(end - start)*1000:.2f} mini seconds.")
 
 #model class
 class classification_model(nn.Module):
