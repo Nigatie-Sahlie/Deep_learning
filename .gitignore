@@ -3,6 +3,7 @@ materials/
 note.txt
 notebooks/helper_functions.py
 data/
+Dataset/
 
 #configration
 .DL_VE/
