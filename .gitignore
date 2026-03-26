@@ -4,6 +4,8 @@ note.txt
 notebooks/helper_functions.py
 data/
 Dataset/
+Modularity/m_data/
+Modularity/model/
 
 #configration
 .DL_VE/
