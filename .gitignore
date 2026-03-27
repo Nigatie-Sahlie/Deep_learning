@@ -4,6 +4,7 @@ note.txt
 notebooks/helper_functions.py
 data/
 Dataset/
+models/
 Modularity/m_data/
 Modularity/model/
 Modularity/__pycache__/
