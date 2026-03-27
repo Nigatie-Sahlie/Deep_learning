@@ -6,6 +6,8 @@ data/
 Dataset/
 Modularity/m_data/
 Modularity/model/
+Modularity/__pycache__/
+Modularity/going_modular/__pycache__/
 
 #configration
 .DL_VE/

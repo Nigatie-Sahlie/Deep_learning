@@ -20,8 +20,7 @@ def create_dataloaders(train_dir: str,
     class_names = train_data.classes
     print(f"Class names: {class_names}")
 
-    # Then turn images into dataloaders
-
+    # Then turn images into dataloaders  or into batches.
     train_dataloader = DataLoader(train_data,
                                   batch_size=batch_size,
                                   shuffle=True,
