@@ -2,6 +2,7 @@
 import os
 import torch
 from going_modular import data_setup, engine, model_builder, utils
+from typing import cast
 
 from torchvision import transforms
 
@@ -9,9 +10,10 @@ from torchvision import transforms
 
 def main(train_dir: str, 
          test_dir: str, 
-         save_dir: str = "model",):
+         save_dir: str = "model"):
+    
     # Setup hyperparameters
-    NUM_EPOCHS = 5
+    NUM_EPOCHS = 8
     BATCH_SIZE = 32
     HIDDEN_UNITS = 10
     LEARNING_RATE = 0.001
@@ -20,20 +22,32 @@ def main(train_dir: str,
     device = "cuda" if torch.cuda.is_available() else "cpu"
 
     # Create transforms
-    data_transform = transforms.Compose([
-    transforms.Resize((64, 64)),
-    transforms.ToTensor()
+    train_transform = transforms.Compose([
+        transforms.Resize((264, 264)),
+        transforms.ToTensor(),
+        transforms.RandomHorizontalFlip(p=0.5),
+        transforms.RandomRotation(degrees=15),
+        transforms.Normalize(mean=[0.5, 0.5, 0.5], 
+                             std=[0.5, 0.5, 0.5])
     ])
+
+    test_transform = transforms.Compose([
+        transforms.Resize((264, 264)),
+        transforms.ToTensor(),
+        transforms.Normalize(mean=[0.5, 0.5, 0.5], 
+                             std=[0.5, 0.5, 0.5])
+    ])
+    
 
     # Create DataLoaders with help from data_setup.py
     train_dataloader, test_dataloader, class_names = data_setup.create_dataloaders(
                                         train_dir=train_dir,
                                         test_dir=test_dir,
-                                        transform=data_transform,
+                                        train_transform=train_transform,
+                                        test_transform=test_transform,
                                         batch_size=BATCH_SIZE,
-                                        num_workers=os.cpu_count()
+                                        num_workers=cast(int, os.cpu_count())
                                     )
-
     # Create model with help from model_builder.py
     model = model_builder.TinyVGG(
         input_shape=3,
@@ -47,7 +61,7 @@ def main(train_dir: str,
                                 lr=LEARNING_RATE)
 
     # Start training with help from engine.py
-    engine.train_loop(model=model,
+    train_result = engine.train_loop(model=model,
                 train_dataloader=train_dataloader,
                 test_dataloader=test_dataloader,
                 loss_fn=loss_fn,
@@ -59,3 +73,6 @@ def main(train_dir: str,
     utils.save_model(model=model,
                     target_dir=save_dir,
                     model_name="05_going_modular_script_mode_tinyvgg_model.pth")
+    
+    return model, test_dataloader, class_names, train_result
+    

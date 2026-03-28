@@ -20,3 +20,20 @@ def save_model(
     print(f"Saving the model to: {model_save_path}")
     torch.save(obj=model.state_dict(),  f=model_save_path)
     print("Model saved successfully!")
+
+
+# Load the model
+def load_model(model: torch.nn.Module,
+               model_path: str,
+               device):
+    
+    # Load the model state dict
+    model.load_state_dict(torch.load(model_path, map_location=device))
+    model.to(device)
+
+    # Set to evaluation mode
+    model.eval()
+
+    # print the result
+    print(f"Model loaded successfully from {model_path}")
+    return model

@@ -4,6 +4,7 @@ import seaborn as sns
 import torch
 import torch.nn as nn
 from sklearn.metrics import confusion_matrix, precision_score, recall_score, f1_score, classification_report
+from typing import cast
 
 
 #To calculate the total time taken for the spacific code.
@@ -35,9 +36,9 @@ def man_accuracy(y_true, y_pred):
     return f"{(correct / len(y_true)) * 100:.2f}%"
 
 #scatter plot
-def scatter_plot(X_train, y_train, x_test = None, y_test = None, y_pred = None, title="Scatter Plot"):
+def scatter_plot(X_train, y_train, x_test, y_test = None, y_pred = None, title="Scatter Plot"):
     plt.figure(figsize=(15, 7))
-    plt.scatter(X_train, X_train, c=y_train, cmap=plt.cm.RdYlBu, label="Train")
+    plt.scatter(X_train, X_train, c=y_train, cmap=plt.cm.RdYlBu, label="Train") # type: ignore
     if x_test is not None and y_test is not None:
         plt.scatter(x_test, x_test, color = "orange", label="Test")
     if y_pred is not None:
@@ -157,7 +158,7 @@ def model_eval(model: torch.nn.Module,
         acc /= len(data_loader)
         
     return {"model_name": model.__class__.__name__, # only works when model was created with a class
-            "model_loss": loss.item(),
+            "model_loss": loss.item(), # type: ignore
             "model_acc": acc}
 
 #Calculating confusion matrix
@@ -220,7 +221,7 @@ def evaluate_cnn_metrics(model, test_loader, device):
 
 
 #visualization of confusion matrix
-def plot_confusion_matrix(cm, class_names=None):    
+def plot_confusion_matrix(cm, class_names:str):    
     plt.figure(figsize=(15, 10))
     sns.heatmap(cm, annot=True, fmt="d",
                 xticklabels=class_names,

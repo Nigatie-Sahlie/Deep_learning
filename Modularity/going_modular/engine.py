@@ -48,7 +48,7 @@ def train_step(model: torch.nn.Module,
 def test_step(model: torch.nn.Module,
               dataloader: torch.utils.data.DataLoader,
               loss_fn: torch.nn.Module,
-              device: torch.device) -> Tuple[float, float]:
+              device) -> Tuple[float, float]:
  
     # put model in evaluation mode
     model.eval()
@@ -86,13 +86,15 @@ def train_loop(model:torch.nn.Module,
                 optimizer: torch.optim.Optimizer,
                 loss_fn: torch.nn.Module,
                 epoches: int,
-                device: torch.device) -> Dict[str, List]:
+                device) -> Dict[str, List]:
     
+    # Store accuracy and loss of the model for both train and test data.
     results = {"train_loss": [],
                "train_acc": [],
                "test_loss": [],
                "test_accu": []
                }
+    
     for epoch in tqdm(range(epoches)):
         train_loss, train_acc = train_step(model=model,
                                           dataloader=train_dataloader,
@@ -104,13 +106,13 @@ def train_loop(model:torch.nn.Module,
                                        loss_fn=loss_fn,
                                        device=device)
         print(f"Epoch: {epoch+1} | "
-              f"train_loss: {train_loss:.4f} | "
-              f"train_acc: {train_acc:.4f} | "
-              f"test_loss: {test_loss:.4f} | "
+              f"train_loss: {train_loss:.4f}   |   "
+              f"train_acc: {train_acc:.4f}   |   "
+              f"test_loss: {test_loss:.4f}   |   "
               f"test_acc: {test_acc:.4f}")
         
         results["train_loss"].append(train_loss)
-        results["train_acc"].append(train_acc)
+        results["train_accu"].append(train_acc)
         results["test_loss"].append(test_loss)
         results["test_accu"].append(test_acc)
     return results

@@ -1,7 +1,5 @@
 #  it is the time to create or build a model. the model will be simple for educational purposes like tinyVGG model.
 
-from typing import Any
-
 import torch
 from torch import nn
 
@@ -9,7 +7,7 @@ from torch import nn
 
 class TinyVGG(nn.Module):
     def __init__(self, input_shape: int, hidden_units: int, output_shape: int) -> None:    # it is the constructor of the class and it defines the architecture of the model.
-        super().__init__()             # Connect my model with pyTorch system. it is important for tracking the model and its parameters.
+        super().__init__()                                                                 # Connect my model with pyTorch system. it is important for tracking the model and its parameters.
 
         # Define the model architecture(the layers of the model).
         self.conv_block_1 = nn.Sequential(
@@ -43,7 +41,7 @@ class TinyVGG(nn.Module):
         )
         self.Classifier = nn.Sequential(
             nn.Flatten(),
-            nn.Linear(in_features=hidden_units*13*13,
+            nn.Linear(in_features=hidden_units*63 * 63,
                       out_features=output_shape)
         )
 
