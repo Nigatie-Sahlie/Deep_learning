@@ -23,10 +23,12 @@ def check_data(data_path, image_path):
                 f.write(r.content)      
         # Unzip the data
         with zipfile.ZipFile(data_path / "pizza_steak_sushi.zip", "r") as zip_ref:
-            zip_ref.extractall(image_path),
+            zip_ref.extractall(image_path),    # type: ignore
         
         # Remove the zip file
         os.remove(data_path / "pizza_steak_sushi.zip")  
+
+        # 09555413
 
 
 # Define the function to create dataloaders

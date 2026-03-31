@@ -90,7 +90,7 @@ def train_loop(model:torch.nn.Module,
     
     # Store accuracy and loss of the model for both train and test data.
     results = {"train_loss": [],
-               "train_acc": [],
+               "train_accu": [],
                "test_loss": [],
                "test_accu": []
                }
