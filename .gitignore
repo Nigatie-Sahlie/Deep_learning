@@ -9,6 +9,8 @@ Modularity/m_data/
 Modularity/model/
 Modularity/__pycache__/
 Modularity/going_modular/__pycache__/
+experiment/logs/
+experiment/runs/
 
 #configration
 .DL_VE/
