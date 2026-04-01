@@ -1,16 +1,16 @@
 #files
 materials/
 note.txt
-notebooks/helper_functions.py
+01 Introduction/notebooks/helper_functions.py
 data/
 Dataset/
 models/
-Modularity/m_data/
-Modularity/model/
-Modularity/__pycache__/
-Modularity/going_modular/__pycache__/
-experiment/logs/
-experiment/runs/
+02 Modularity/m_data/
+02 Modularity/model/
+02 Modularity/__pycache__/
+02 Modularity/going_modular/__pycache__/
+04 Experiment Tracker/logs/
+04 Experiment Tracker/runs/
 
 #configration
 .DL_VE/
