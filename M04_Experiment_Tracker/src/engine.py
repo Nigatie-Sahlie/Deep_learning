@@ -2,8 +2,8 @@
 # from csv import writer
 
 import torch
-from Modularity.going_modular.engine import train_step, test_step
-import tqdm
+from M02_Modularity.going_modular.engine import train_step, test_step
+from tqdm.auto import tqdm
 
 # This is updated script for training and evaluation model and it includes the SummeryWitter for logging the training and evaluation metrics to TensorBoard.
 def train_model(model: torch.nn.Module,
@@ -13,15 +13,19 @@ def train_model(model: torch.nn.Module,
                 loss_fn: torch.nn.Module,
                 epochs: int,
                 device: torch.device,
-                writer: torch.utils.tensorboard.SummaryWriter): # type: ignore
+                writer: torch.utils.tensorboard.SummaryWriter):   # type: ignore
     
+    # Track the pyTorch model architecture
+    writer.add_graph(model = model, 
+                    input_to_model = torch.randn(32, 3, 224, 224).to(device)) 
+  
     result = {"train_loss": [],
               "train_accu": [],
               "test_loss": [],
               "test_accu": []}
     
     # Create a SummaryWriter to log the training and evaluation metrics to TensorBoard
-    for epoch in tqdm.tqdm(range(epochs)):
+    for epoch in tqdm(range(epochs)):
         train_loss, train_accu = train_step(model=model,
                                            dataloader=train_dataloader,
                                            optimizer=optimizer,
@@ -46,14 +50,9 @@ def train_model(model: torch.nn.Module,
         result["test_accu"].append(test_accu)
 
         # add accuracy and loss to tensorboard
-        writer.add_scalar("train_accu", train_accu, epoch)
-        writer.add_scalar("test_accu", test_accu, epoch)
-
-        # Track the pyTorch model architecture
-        writer.add_graph(model = model, 
-                         input_to_model = torch.randn(32, 3, 224, 224).to(device)) 
-        #   Close writer
-        writer.close()
+        if writer:
+          writer.add_scalar("train_accu", train_accu, epoch)
+          writer.add_scalar("test_accu", test_accu, epoch)
 
       # Return the result dictionary.
     return result

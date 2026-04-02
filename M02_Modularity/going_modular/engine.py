@@ -1,6 +1,6 @@
 # Import libraries
 import torch
-from tqdm.auto import tqdm
+from tqdm import tqdm
 from typing import Dict, List, Tuple
 
 # creating training loop
@@ -54,7 +54,7 @@ def test_step(model: torch.nn.Module,
     model.eval()
 
     # test loss and test accuracy
-    test_loss, test_acc = 0, 0
+    test_loss, test_accu = 0, 0
 
     # turn on inference context manager
     with torch.inference_mode():
@@ -72,12 +72,12 @@ def test_step(model: torch.nn.Module,
 
             # Calculate and accumulate accuracy metrics across all batches
             test_pred_label = test_pred_logit.argmax(dim=1)
-            test_acc += ((test_pred_label == y).sum().item()/len(test_pred_label))
+            test_accu += ((test_pred_label == y).sum().item()/len(test_pred_label))
     
     # Adjest metrics to get average loss
     test_loss = test_loss / len(dataloader)
-    test_acc = test_acc / len(dataloader)
-    return test_loss, test_acc
+    test_accu = test_accu / len(dataloader)
+    return test_loss, test_accu
 
 # final training loop
 def train_loop(model:torch.nn.Module,
@@ -96,23 +96,23 @@ def train_loop(model:torch.nn.Module,
                }
     
     for epoch in tqdm(range(epoches)):
-        train_loss, train_acc = train_step(model=model,
+        train_loss, train_accu = train_step(model=model,
                                           dataloader=train_dataloader,
                                           loss_fn=loss_fn,
                                           optimizer=optimizer,
                                           device=device)
-        test_loss, test_acc = test_step(model=model,
+        test_loss, test_accu = test_step(model=model,
                                        dataloader=test_dataloader,
                                        loss_fn=loss_fn,
                                        device=device)
         print(f"Epoch: {epoch+1} | "
               f"train_loss: {train_loss:.4f}   |   "
-              f"train_acc: {train_acc:.4f}   |   "
+              f"train_acc: {train_accu:.4f}   |   "
               f"test_loss: {test_loss:.4f}   |   "
-              f"test_acc: {test_acc:.4f}")
+              f"test_acc: {test_accu:.4f}")
         
         results["train_loss"].append(train_loss)
-        results["train_accu"].append(train_acc)
+        results["train_accu"].append(train_accu)
         results["test_loss"].append(test_loss)
-        results["test_accu"].append(test_acc)
+        results["test_accu"].append(test_accu)
     return results

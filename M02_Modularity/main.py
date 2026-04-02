@@ -68,11 +68,6 @@ def main(train_dir: str,
                 optimizer=optimizer,
                 epoches=NUM_EPOCHS,
                 device=device)
-
-    # Save the model with help from utils.py
-    utils.save_model(model=model,
-                    target_dir=save_dir,
-                    model_name="05_going_modular_script_mode_tinyvgg_model.pth")
     
     return model, test_dataloader, class_names, train_result
     

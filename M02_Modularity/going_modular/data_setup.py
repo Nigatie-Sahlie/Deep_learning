@@ -7,28 +7,38 @@ from torchvision import datasets, transforms
 from torch.utils.data import DataLoader
 
 # The method for checking the data's folder and download if not exist.
-def check_data(data_path, image_path):
+def check_data(data_path, 
+               image_path, 
+               url):
     # Check if the image path exists or not.
     if image_path.is_dir():
         print(f"{data_path} directory already exists, skipping download.")
     else:
-        print(f"{data_path} directory does not exist, creating one and downloading data.")
+        print(f"{data_path} directory does not exist.")
+        
+        # Ask for permission
+        response = input("Download data? (y/n): ").strip().lower()
+        if response != 'y':
+            print("Download cancelled.")
+            return
+        
+        print("Creating directory and downloading data...")
         data_path.mkdir(parents=True, exist_ok=True)
         
         # Download the data
         with requests.get(
-            "https://github.com/mrdbourke/pytorch-deep-learning/raw/main/data/pizza_steak_sushi.zip"
+            url
         ) as r:
             with open(data_path / "pizza_steak_sushi.zip", "wb") as f:
                 f.write(r.content)      
+        
         # Unzip the data
         with zipfile.ZipFile(data_path / "pizza_steak_sushi.zip", "r") as zip_ref:
-            zip_ref.extractall(image_path),    # type: ignore
+            zip_ref.extractall(image_path)    # removed type ignore comment
         
         # Remove the zip file
-        os.remove(data_path / "pizza_steak_sushi.zip")  
-
-        # 09555413
+        os.remove(data_path / "pizza_steak_sushi.zip")
+        print("Download complete.")
 
 
 # Define the function to create dataloaders
