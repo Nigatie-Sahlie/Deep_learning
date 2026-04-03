@@ -1,4 +1,5 @@
 import torch
+import torch.nn as nn
 from datetime import datetime
 import os
 from torch.utils.tensorboard import SummaryWriter
@@ -6,9 +7,9 @@ from torch.utils.tensorboard import SummaryWriter
 # Random seed for reproduciblity
 def set_seed(seed: int = 42):
 
-    torch.manual_seed(seed)      # This is for CPU reproducibility 
-    torch.cuda.manual_seed(seed)  # This is for current GPU reproducibility
-    torch.cuda.manual_seed_all(seed)  # This is for all GPU reproducibility (if you are using multi-GPU)
+    torch.manual_seed(seed)                       # This is for CPU reproducibility 
+    torch.cuda.manual_seed(seed)                  # This is for current GPU reproducibility
+    torch.cuda.manual_seed_all(seed)              # This is for all GPU reproducibility (if you are using multi-GPU)
 
 
 
@@ -40,3 +41,25 @@ def create_writer(root_dir: str,
 
     # Return the summery writer instance.
     return SummaryWriter(log_dir=log_dir)
+
+# Create Models
+def create_model(model_name: str,
+                 model: torch.nn.Module,
+                 in_features: int,
+                 out_features: int):
+    
+
+    # Reproducibility
+    set_seed()
+
+    # Freeze the base model parameters
+    for param in model.features.parameters():      # type: ignore
+        param.requires_grad = False
+    
+    # Change the classifier head of the model as we need.
+    model.classifier = nn.Sequential(
+        nn.Dropout(p=0.2),
+        nn.Linear(in_features = in_features, out_features = out_features)
+    )
+    print(f"[INFO] New model {model_name} Created with {in_features} input features and {out_features} output features.")
+    return model
