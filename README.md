@@ -149,6 +149,19 @@ This is an educational and portfolio project rather than a production deployment
 
 This project shows a progression from understanding the framework fundamentals to building maintainable training workflows. It demonstrates practical skills in PyTorch, computer vision, transfer learning, experiment comparison, model evaluation, and communicating technical results through reproducible notebooks and modular source code.
 
+## Dataset attribution
+
+- Pizza, steak, and sushi images: provided through Daniel Bourke's
+  [Learn PyTorch for Deep Learning](https://github.com/mrdbourke/pytorch-deep-learning)
+  course dataset. Original image ownership and individual reuse rights belong
+  to the respective owners.
+- Fashion-MNIST: [Zalando Research](https://github.com/zalandoresearch/fashion-mnist),
+  distributed through PyTorch/torchvision.
+
+These datasets are used for educational and portfolio demonstration purposes.
+The dataset licenses do not automatically grant rights to redistribute,
+commercialize, or scrape additional images.
+
 ## Author
 
 **Nigatie Sahlie**  
